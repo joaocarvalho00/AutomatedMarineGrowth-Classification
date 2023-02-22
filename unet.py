@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import cv2
-from hyperparameters import *
+from utils import conv, up_conv
 from torchvision.models import vgg16_bn
 
 
