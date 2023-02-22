@@ -7,7 +7,7 @@ from torchvision.models import vgg16_bn
 
 
 class UNet(nn.Module):
-    def __init__(self, pretrained=True, out_channels=12):
+    def __init__(self, pretrained=True, out_channels=24):
         super().__init__()
 
         # Encoding
