@@ -150,10 +150,18 @@ def display_original_mask_predicted_mask(color_dict_path, model, dataset_img):
 
     ax1.imshow(original_img)
     ax1.set_title("Original image")
+    ax1.set_yticklabels([])
+    ax1.set_yticklabels([])
+
     ax2.imshow(rgb_mask)
     ax2.set_title("Ground truth mask")
+    ax2.set_yticklabels([])
+    ax2.set_yticklabels([])
+
     ax3.imshow(rgb_mask_out)
     ax3.set_title("Predicted mask")
+    ax3.set_yticklabels([])
+    ax3.set_yticklabels([])
 
     plt.tight_layout()
     plt.show()
