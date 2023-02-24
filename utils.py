@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import cv2
+import pandas as pd
+from tqdm import tqdm
+import numpy as np
 
 def get_transforms():
     """
@@ -68,3 +71,71 @@ def UnetLoss(preds, targets):
     ce_loss = loss_function(preds, targets)
     acc = (torch.max(preds, 1)[1] == targets).float().mean()
     return ce_loss, acc
+
+def load_model():
+    pass
+
+def save_model():
+    pass
+
+
+def create_rgb_map_from_csv(color_map_path):
+    """ 
+    Inputs path to csv file with RGB encodings for each class and returns a dictionary with the encodings
+    """
+    
+    colormap = pd.read_csv(color_map_path, sep = ", ", engine = "python")
+
+
+    r = colormap["r"].to_list()
+    g = colormap["b"].to_list()
+    b = colormap["b"].to_list()
+
+    colormap_dict = {}
+
+    for i in range(0, len(r)):
+        colormap_dict.update({i : [r[i], g[i] , b[i]]})
+    
+    return colormap_dict
+
+
+def paint_mask_from_rgb_dict(rgb_dict, img):
+
+    rgb_img = np.zeros((img.shape[0], img.shape[1], 3)).astype(int)
+
+    for key in tqdm(rgb_dict.keys()):
+        rgb_img[img == key] = rgb_dict[key]
+
+    return rgb_img
+
+def display_original_mask_predicted_mask(color_dict_path, model, dataset_img):
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    convertTensor = transforms.ToTensor()
+
+    input_img_tensor = convertTensor(dataset_img[0]).to(device)
+
+    with torch.no_grad():
+        output = model(input_img_tensor.unsqueeze(0)).cpu()
+        mask = output.argmax(dim=1)
+        mask_out = mask[0].long().squeeze().numpy()
+
+    original_img = dataset_img[0]
+    original_mask = dataset_img[1]
+
+    color_dict = create_rgb_map_from_csv(color_dict_path)
+
+    rgb_mask = paint_mask_from_rgb_dict(color_dict, original_mask)
+    rgb_mask_out = paint_mask_from_rgb_dict(color_dict, mask_out)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+    ax1.imshow(original_img)
+    ax1.set_title("Original image")
+    ax2.imshow(rgb_mask)
+    ax2.set_title("Ground truth mask")
+    ax3.imshow(rgb_mask_out)
+    ax3.set_title("Predicted mask")
+
+    plt.tight_layout()
+    plt.show()
