@@ -100,6 +100,15 @@ def create_rgb_map_from_csv(color_map_path):
 
 
 def paint_mask_from_rgb_dict(rgb_dict, img):
+    """
+    Takes a grayscale image and maps each value (label) to it's corresponding RGB value in the rgb dictionary.
+
+    Inputs:
+        rgb_dict: python dictionary containing each label and the corresponding RGB mapping:
+        img: grayscale image
+    Outputs:
+        rgb_img: RGB representation of img with the mappings provided in the dictionary
+    """
 
     rgb_img = np.zeros((img.shape[0], img.shape[1], 3)).astype(int)
 
@@ -109,7 +118,16 @@ def paint_mask_from_rgb_dict(rgb_dict, img):
     return rgb_img
 
 def display_original_mask_predicted_mask(color_dict_path, model, dataset_img):
+    """
+    Displays a desired image, it's ground truth mask and the model's predicted mask.
 
+    Inputs:
+        color_dict_path: path to the csv file that maps each label to an RGB value.
+        model: network we are using
+        dataset_img: desired image
+    Outputs:
+        Displays the images in a separate window
+    """
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     convertTensor = transforms.ToTensor()
 
