@@ -7,11 +7,11 @@ from torchvision.models import vgg16_bn
 
 
 class UNet(nn.Module):
-    def __init__(self, pretrained=True, out_channels=24):
+    def __init__(self, out_channels=23):
         super().__init__()
 
         # Encoding
-        self.encoder = vgg16_bn(pretrained=pretrained).features   #nn.Sequential behaves like python list of all layers (so can be sliced)
+        self.encoder = vgg16_bn(weights="IMAGENET1K_V1").features   #nn.Sequential behaves like python list of all layers (so can be sliced)
         self.block1 = nn.Sequential(*self.encoder[:6])
         self.block2 = nn.Sequential(*self.encoder[6:13])
         self.block3 = nn.Sequential(*self.encoder[13:20])
@@ -35,6 +35,7 @@ class UNet(nn.Module):
 
         # Output layer
         self.conv11 = nn.Conv2d(32, out_channels, kernel_size=1)
+        print("-MODEL LOADED-")
 
     def forward(self, x):
         block1 = self.block1(x)
